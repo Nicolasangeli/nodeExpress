@@ -1,17 +1,26 @@
-# Use the official Node.js image as the base image 
-FROM node:18 
+FROM node:18
 
-# Set the working directory in the container 
-WORKDIR /main 
+WORKDIR /main
 
-EXPOSE 3000 
+# Copiar package.json e package-lock.json primeiro (melhor cache)
+COPY package*.json ./
 
-# Copy the application files into the working directory 
-COPY . /main 
+# Instalar dependências
+RUN npm install
 
-# Install the application dependencies 
+# Depois copiar o resto dos arquivos
+COPY . .
 
-RUN npm install 
+# Garantir que a pasta public e db.json existam e tenham permissões corretas
+RUN mkdir -p public && \
+    touch db.json && \
+    chown -R node:node /main
 
-# Define the entry point for the container 
-CMD ["npm", "start"] 
+# Porta que o json-server vai usar
+EXPOSE 3000
+
+# Mudar para usuário node (segurança)
+USER node
+
+# Comando para iniciar o servidor
+CMD ["npm", "start"]
