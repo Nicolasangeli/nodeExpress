@@ -1,6 +1,8 @@
 {
+  "name": "nodeexpress",
+  "version": "1.0.0",
   "scripts": {
-    "start": "json-server --watch db.json --port $PORT --static public"
+    "start": "json-server --watch db.json --port ${PORT:-3000} --host 0.0.0.0 --static ./public"
   },
   "dependencies": {
     "express": "^5.1.0",
