@@ -1,26 +1,19 @@
-FROM node:18
+# Use the official Node.js image as the base image 
+FROM node:18 
 
-WORKDIR /main
+# Set the working directory in the container 
+WORKDIR /main 
 
-# Copiar package.json e package-lock.json primeiro (melhor cache)
+# Copy package.json and package-lock.json first to leverage Docker cache
 COPY package*.json ./
 
-# Instalar dependências
+# Install the application dependencies
 RUN npm install
 
-# Depois copiar o resto dos arquivos
+# Copy the rest of the application files
 COPY . .
 
-# Garantir que a pasta public e db.json existam e tenham permissões corretas
-RUN mkdir -p public && \
-    touch db.json && \
-    chown -R node:node /main
+EXPOSE 3000 
 
-# Porta que o json-server vai usar
-EXPOSE 3000
-
-# Mudar para usuário node (segurança)
-USER node
-
-# Comando para iniciar o servidor
+# Define the entry point for the container 
 CMD ["npm", "start"]
