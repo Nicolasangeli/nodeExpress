@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD - Listar Pessoas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        .voltar {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .voltar:hover {
+            background-color: #5a6268;
+        }
+        .refresh {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+            border: none;
+        }
+        .refresh:hover {
+            background-color: #218838;
+        }
+        #mensagem {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .erro {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Pessoas</h1>
+    
+    <button class="refresh" onclick="carregarPessoas()">Atualizar Lista</button>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>CPF</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-corpo">
+        </tbody>
+    </table>
+
+    <div id="mensagem" class="erro"></div>
+
+    <a href="index.html" class="voltar">Voltar ao Menu</a>
+
+    <script>
+        async function carregarPessoas() {
+            try {
+                const response = await fetch('/pessoas');
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar dados');
+                }
+                const pessoas = await response.json();
+                
+                const tbody = document.getElementById('tabela-corpo');
+                tbody.innerHTML = ''; // Limpa a tabela
+                
+                pessoas.forEach(pessoa => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${pessoa.id}</td>
+                        <td>${pessoa.nome}</td>
+                        <td>${pessoa.idade}</td>
+                        <td>${pessoa.cpf}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('mensagem').style.display = 'none';
+            } catch (error) {
+                const msgDiv = document.getElementById('mensagem');
+                msgDiv.textContent = 'Erro ao carregar pessoas: ' + error.message;
+                msgDiv.style.display = 'block';
+            }
+        }
+
+        // Carrega a lista assim que a página é aberta
+        carregarPessoas();
+    </script>
+</body>
+</html>
